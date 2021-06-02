@@ -12,10 +12,10 @@ catkin_make
 # launch run
 ```
 source ./devel/setup.bash 
-roslaunch hikrobot_camera color_livox.launch
+roslaunch livox_color color_livox.launch
 ```
 # launch run with rviz
 ```
 source ./devel/setup.bash 
-roslaunch hikrobot_camera color_livox_rviz.launch
+roslaunch livox_color color_livox_rviz.launch
 ```
