@@ -6,7 +6,7 @@ Detailed guidance reference:https://blog.csdn.net/weixin_41965898/article/detail
 ```
 mkdir -p ~/ws_livox_color/src
 git clone https://github.com/luckyluckydadada/LIVOX_COLOR.git ~/ws_livox_color/src/livox_color
-cd ~/livox_color
+cd ~/ws_livox_color
 catkin_make
 ```
 # launch run
