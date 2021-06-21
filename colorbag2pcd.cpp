@@ -4,28 +4,8 @@
 #include <string>
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl/io/pcd_io.h>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <string>
-#include <vector>
-#include <stdio.h>
-#include <Eigen/Core>
-#include <ros/types.h>
-#include <ros/serialization.h>
-#include <ros/builtin_message_traits.h>
-#include <ros/message_operations.h>
-#include <string>
-#include <vector>
-#include <map>
-
-#include <ros/types.h>
-#include <ros/serialization.h>
-#include <ros/builtin_message_traits.h>
-#include <ros/message_operations.h>
 
 #include <ros/ros.h>
-#include <ros/console.h>
 #include <std_msgs/Header.h>
 #include <sensor_msgs/PointCloud2.h>
 #include <rosbag/bag.h>
