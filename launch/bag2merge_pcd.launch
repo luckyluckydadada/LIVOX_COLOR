@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+    <arg name="input" default=""/>
+    <arg name="output" default="" />
+    <arg name="threshold" default="1"/>
+
+    <param name="input_bag_path"        value="$(arg input)" />  
+    <param name="output_pcd_path"       value="$(arg output)/$(arg threshold).pcd" /> 
+    <param name="threshold_lidar"       type="int" value="$(arg threshold)" /> 
+    
+    <node pkg="livox_color" name="bag2merge_pcd" type="bag2merge_pcd" output="screen"></node>
+
+</launch>

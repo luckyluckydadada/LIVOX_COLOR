@@ -55,5 +55,7 @@ include_directories(
 add_executable(${PROJECT_NAME} main.cpp)
 target_link_libraries(${PROJECT_NAME} ${PCL_LIBRARIES}  ${catkin_LIBRARIES}  ${OpenCV_LIBS})
 
-add_executable(colorbag2pcd colorbag2pcd.cpp)
-target_link_libraries(colorbag2pcd ${PCL_LIBRARIES}  ${catkin_LIBRARIES}  ${OpenCV_LIBS})
+add_executable(colorbag2merge_pcd colorbag2merge_pcd.cpp)
+target_link_libraries(colorbag2merge_pcd ${PCL_LIBRARIES}  ${catkin_LIBRARIES}  ${OpenCV_LIBS})
+add_executable(bag2merge_pcd bag2merge_pcd.cpp)
+target_link_libraries(bag2merge_pcd ${PCL_LIBRARIES}  ${catkin_LIBRARIES}  ${OpenCV_LIBS})
