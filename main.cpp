@@ -142,6 +142,7 @@ private:
 		// std::cout<<  fusion_pcl_ptr->points.size() << std::endl;
 		pcl::toROSMsg(*fusion_pcl_ptr, fusion_msg); //将点云转化为消息才能发布
 		fusion_msg.header.frame_id = "livox_frame"; //帧id改成和/livox/lidar一样的，同一坐标系
+		fusion_msg.header.stamp=ros::Time::now();
 		pubCloud.publish(fusion_msg);				//发布调整之后的点云数据
 	}
 };
