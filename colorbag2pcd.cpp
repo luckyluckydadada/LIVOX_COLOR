@@ -52,6 +52,9 @@ void loadAndSavePointcloud() {
         pcl::io::savePCDFileASCII(output_path, livox_cloud);
         // std::cout<< livox_cloud.point_num<<std::endl; // mid40：一帧10000个点；1秒10帧率
         ++cloudCount;
+        if (threshold_lidar == 0){
+            continue;
+        }
         if (cloudCount >= threshold_lidar) {
             break;
         }
