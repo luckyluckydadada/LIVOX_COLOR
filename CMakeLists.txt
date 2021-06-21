@@ -17,7 +17,7 @@ catkin_package(
  
 )
 find_package(OpenCV REQUIRED)
-find_package(PCL 1.3 REQUIRED COMPONENTS common io)
+find_package(PCL REQUIRED)
 find_package(catkin REQUIRED COMPONENTS ${PACKAGE_DEPENDENCIES})
 include_directories(include ${catkin_INCLUDE_DIRS} ${PCL_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS} )
 link_directories(${PCL_LIBRARY_DIRS})
@@ -25,3 +25,6 @@ add_definitions(${PCL_DEFINITIONS})
 
 add_executable(${PROJECT_NAME} main.cpp)
 target_link_libraries(${PROJECT_NAME} ${PCL_LIBRARIES}  ${catkin_LIBRARIES}  ${OpenCV_LIBS})
+
+add_executable(colorbag2pcd colorbag2pcd.cpp)
+target_link_libraries(colorbag2pcd ${PCL_LIBRARIES}  ${catkin_LIBRARIES}  ${OpenCV_LIBS})

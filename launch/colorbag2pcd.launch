@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+    <arg name="input" default="/home/yijiankeji/color_pcd/realtime/scenes1/2021-06-08-14-01-45.bag"/>
+    <arg name="output" default="/home/yijiankeji/color_pcd/realtime/scenes1/" />
+    <arg name="threshold" default="1"/>
+
+    <param name="input_bag_path"        value="$(arg input)" />  
+    <param name="output_pcd_path"       value="$(arg output)/$(arg threshold).pcd" /> 
+    <param name="threshold_lidar"       type="int" value="$(arg threshold)" /> 
+    
+    <node pkg="livox_color" name="colorbag2pcd" type="colorbag2pcd" output="screen"></node>
+
+</launch>
