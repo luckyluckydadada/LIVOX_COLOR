@@ -23,21 +23,17 @@
 #define H Hmax
 #define W Wmax
 
-// 使用pcl::PointXYZRGBL结构体代替自定义的PointXYZRGBI（pcl没有PointXYZRGBI结构体）
-// 自定义的PointXYZRGBI结构体不含很过内置函数
-//  XYZRGBL 的L是uint32_t 四字节
-//  XYZI    的I是float 四字节
-
-
-// struct PointXYZRGBI
-// {
-// 	PCL_ADD_POINT4D;
-// 	PCL_ADD_RGB;
-// 	PCL_ADD_INTENSITY;
-// 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
-// } EIGEN_ALIGN16;
-// POINT_CLOUD_REGISTER_POINT_STRUCT(PointXYZRGBI,
-// 								  (float, x, x)(float, y, y)(float, z, z)(float, rgb, rgb)(float, intensity, intensity)
+// 自定义XYZRGBI结构体
+struct PointXYZRGBI
+{
+	PCL_ADD_POINT4D;
+	PCL_ADD_RGB;
+	PCL_ADD_INTENSITY;
+	uint16_t label;
+	EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
+} EIGEN_ALIGN16;
+POINT_CLOUD_REGISTER_POINT_STRUCT(PointXYZRGBI,
+								  (float, x, x)(float, y, y)(float, z, z)(float, rgb, rgb)(float, intensity, intensity)(uint16_t, label, label))
 
 //全局变量都能访问，图像回调中写，点云回调中读
 cv::Vec3b image_color[H][W];
@@ -108,13 +104,12 @@ public:
 private:
 	//点云回调函数
 	void pointCloudCallback(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg)
-	{	
+	{
+		pcl::PointCloud<PointXYZRGBI>::Ptr fusion_pcl_ptr(new pcl::PointCloud<PointXYZRGBI>);  //放在这里是因为，每次都需要重新初始化
 		pcl::PointCloud<pcl::PointXYZI>::Ptr raw_pcl_ptr(new pcl::PointCloud<pcl::PointXYZI>); //livox点云消息包含xyz和intensity
 		pcl::fromROSMsg(*laserCloudMsg, *raw_pcl_ptr);										   //把msg消息指针转化为PCL点云
 		cv::Mat X(4, 1, cv::DataType<double>::type);
 		cv::Mat Y(3, 1, cv::DataType<double>::type);
-
-		pcl::PointCloud<pcl::PointXYZRGBL>::Ptr fusion_pcl_ptr(new pcl::PointCloud<pcl::PointXYZRGBL>);  //放在这里是因为，每次都需要重新初始化
 		for (int i = 0; i < raw_pcl_ptr->points.size(); i++)
 		{
 			X.at<double>(0, 0) = raw_pcl_ptr->points[i].x;
@@ -129,7 +124,7 @@ private:
 			// std::cout<<Y<<pt<<std::endl;
 			if (pt.x >= 0 && pt.x < W && pt.y >= 0 && pt.y < H && raw_pcl_ptr->points[i].x > 0) //&& raw_pcl_ptr->points[i].x>0去掉图像后方的点云
 			{
-				pcl::PointXYZRGBL p;
+				PointXYZRGBI p;
 				p.x = raw_pcl_ptr->points[i].x;
 				p.y = raw_pcl_ptr->points[i].y;
 				p.z = raw_pcl_ptr->points[i].z;
@@ -137,15 +132,13 @@ private:
 				p.b = image_color[pt.y][pt.x][0];
 				p.g = image_color[pt.y][pt.x][1];
 				p.r = image_color[pt.y][pt.x][2];
-				// std::cout<<raw_pcl_ptr->points[i].intensity<<" ";
-				p.label= (uint32_t)raw_pcl_ptr->points[i].intensity; //继承之前点云的intensity
-				// std::cout<<p.label<<std::endl;
+				p.intensity = raw_pcl_ptr->points[i].intensity; //继承之前点云的intensity
 				fusion_pcl_ptr->points.push_back(p);
 			}
 		}
 
-		fusion_pcl_ptr->width = fusion_pcl_ptr->points.size();
-		fusion_pcl_ptr->height = 1;
+		fusion_pcl_ptr->width = 1;
+		fusion_pcl_ptr->height = fusion_pcl_ptr->points.size();
 		// std::cout<<  fusion_pcl_ptr->points.size() << std::endl;
 		pcl::toROSMsg(*fusion_pcl_ptr, fusion_msg); //将点云转化为消息才能发布
 		fusion_msg.header.frame_id = "livox_frame"; //帧id改成和/livox/lidar一样的，同一坐标系
