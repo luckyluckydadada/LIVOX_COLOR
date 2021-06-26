@@ -144,11 +144,11 @@ private:
 
 		fusion_pcl_ptr->width = fusion_pcl_ptr->points.size();
 		fusion_pcl_ptr->height = 1;
-		std::cout<<  fusion_pcl_ptr->points.size() << std::endl;
+		// std::cout<<  fusion_pcl_ptr->points.size() << std::endl;
 		pcl::toROSMsg(*fusion_pcl_ptr, fusion_msg);			   //将点云转化为消息才能发布
 		fusion_msg.header.frame_id = "livox_frame";			   //帧id改成和/livox/lidar一样的，同一坐标系
 		fusion_msg.header.stamp = laserCloudMsg->header.stamp; // 时间戳和/livox/lidar 一致
-		std::cout<<fusion_msg;
+		// std::cout<<fusion_msg;
 		pubCloud.publish(fusion_msg);						   //发布调整之后的点云数据
 	}
 };
