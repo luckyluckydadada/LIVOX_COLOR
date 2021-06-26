@@ -24,19 +24,19 @@
 #define W Wmax
 
 /* 自定义的PointXYZRGBIL（pcl没有PointXYZRGBIL、PointXYZRGBI结构体）*/
-struct PointXYZRGBIL
-{
-	PCL_ADD_POINT4D;
-	PCL_ADD_RGB;
-	uint32_t label;
-	PCL_ADD_INTENSITY;
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
-} EIGEN_ALIGN16;
-POINT_CLOUD_REGISTER_POINT_STRUCT(
-	PointXYZRGBIL,
-	(float, x, x)(float, y, y)(float, z, z)(float, rgb, rgb)(uint32_t, label, label)(float, intensity, intensity))
-
+// struct PointXYZRGBIL
+// {
+// 	PCL_ADD_POINT4D;
+// 	PCL_ADD_RGB;
+// 	uint32_t label;
+// 	PCL_ADD_INTENSITY;
+// 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
+// } EIGEN_ALIGN16;
+// POINT_CLOUD_REGISTER_POINT_STRUCT(
+// 	PointXYZRGBIL,
+// 	(float, x, x)(float, y, y)(float, z, z)(float, rgb, rgb)(uint32_t, label, label)(float, intensity, intensity))
 // typedef PointXYZRGBIL PointType;
+
 // 使用pcl::PointXYZRGBNormal结构体代替自定义的PointXYZRGBI，为了livox_color_mapping建图，自定义结构体不支持很多内置函数
 typedef pcl::PointXYZRGBNormal PointType;
 
@@ -144,10 +144,11 @@ private:
 
 		fusion_pcl_ptr->width = fusion_pcl_ptr->points.size();
 		fusion_pcl_ptr->height = 1;
-		// std::cout<<  fusion_pcl_ptr->points.size() << std::endl;
+		std::cout<<  fusion_pcl_ptr->points.size() << std::endl;
 		pcl::toROSMsg(*fusion_pcl_ptr, fusion_msg);			   //将点云转化为消息才能发布
 		fusion_msg.header.frame_id = "livox_frame";			   //帧id改成和/livox/lidar一样的，同一坐标系
 		fusion_msg.header.stamp = laserCloudMsg->header.stamp; // 时间戳和/livox/lidar 一致
+		std::cout<<fusion_msg;
 		pubCloud.publish(fusion_msg);						   //发布调整之后的点云数据
 	}
 };

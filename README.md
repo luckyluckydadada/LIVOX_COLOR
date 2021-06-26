@@ -15,11 +15,6 @@ catkin_make
 source ./devel/setup.bash 
 roslaunch livox_color color_livox.launch
 ```
-## run livox color fuision with rviz
-```
-source ./devel/setup.bash 
-roslaunch livox_color color_livox_rviz.launch
-```
 # Tools
 ## 录制彩色点云topic为rosbag
 ```

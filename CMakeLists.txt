@@ -3,7 +3,7 @@ project(livox_color)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
-set(CMAKE_BUILD_TYPE "Release")
+set(CMAKE_BUILD_TYPE "Debug")
 set(CMAKE_CXX_FLAGS "-std=c++11")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Wall -g")
 ## Find catkin macros and libraries
@@ -54,8 +54,8 @@ include_directories(
 
 add_executable(${PROJECT_NAME} main.cpp)
 target_link_libraries(${PROJECT_NAME} ${PCL_LIBRARIES}  ${catkin_LIBRARIES}  ${OpenCV_LIBS})
-add_executable(for_corlor_mapping main-for-corlor-mapping.cpp)
-target_link_libraries(for_corlor_mapping ${PCL_LIBRARIES}  ${catkin_LIBRARIES}  ${OpenCV_LIBS})
+add_executable(for_color_mapping main-for-color-mapping.cpp)
+target_link_libraries(for_color_mapping ${PCL_LIBRARIES}  ${catkin_LIBRARIES}  ${OpenCV_LIBS})
 
 ## TOOLS
 add_executable(colorbag2merge_pcd colorbag2merge_pcd.cpp)
