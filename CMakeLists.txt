@@ -54,7 +54,10 @@ include_directories(
 
 add_executable(${PROJECT_NAME} main.cpp)
 target_link_libraries(${PROJECT_NAME} ${PCL_LIBRARIES}  ${catkin_LIBRARIES}  ${OpenCV_LIBS})
+add_executable(for-corlor-mapping main-for-corlor-mapping.cpp)
+target_link_libraries(for-corlor-mapping ${PCL_LIBRARIES}  ${catkin_LIBRARIES}  ${OpenCV_LIBS})
 
+## TOOLS
 add_executable(colorbag2merge_pcd colorbag2merge_pcd.cpp)
 target_link_libraries(colorbag2merge_pcd ${PCL_LIBRARIES}  ${catkin_LIBRARIES}  ${OpenCV_LIBS})
 add_executable(bag2merge_pcd bag2merge_pcd.cpp)
