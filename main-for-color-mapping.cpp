@@ -17,13 +17,14 @@
 #include <ros/ros.h>
 #include <image_transport/image_transport.h>
 #include <sensor_msgs/PointCloud2.h>
-// #include <time.h>
+#include <time.h>
 
 #define Hmax 2048
 #define Wmax 3072
 #define H Hmax
 #define W Wmax
-// #define MAX_MIN_RESOLUTION false
+#define MAX_MIN_RESOLUTION false
+
 /* 自定义的PointXYZRGBIL（pcl没有PointXYZRGBIL、PointXYZRGBI结构体）*/
 // struct PointXYZRGBIL
 // {
@@ -111,18 +112,19 @@ private:
 	//点云回调函数
 	void pointCloudCallback(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg)
 	{
-	// clock_t start,ends;
-	// start=clock();
+clock_t start,ends;
+start=clock();
 		pcl::PointCloud<pcl::PointXYZI>::Ptr raw_pcl_ptr(new pcl::PointCloud<pcl::PointXYZI>); //livox点云消息包含xyz和intensity
 		pcl::fromROSMsg(*laserCloudMsg, *raw_pcl_ptr);										   //把msg消息指针转化为PCL点云
 		cv::Mat X(4, 1, cv::DataType<double>::type);
 		cv::Mat Y(3, 1, cv::DataType<double>::type);
 
 		pcl::PointCloud<PointType>::Ptr fusion_pcl_ptr(new pcl::PointCloud<PointType>); //放在这里是因为，每次都需要重新初始化
-		
-		// cv::Point pt_min,pt_max; // 统计点云在画面中的最大像素和最小像素
-		// pt_min.x=W;pt_max.x=0; // 赋初值
-		// pt_min.y=H;pt_max.x=0; // 赋初值
+#if MAX_MIN_RESOLUTION		
+		cv::Point pt_min,pt_max; // 统计点云在画面中的最大像素和最小像素
+		pt_min.x=W;pt_max.x=0; // 赋初值
+		pt_min.y=H;pt_max.x=0; // 赋初值
+#endif
 
 		for (int i = 0; i < raw_pcl_ptr->points.size(); i++)
 		{
@@ -138,20 +140,20 @@ private:
 			// std::cout<<Y<<pt<<std::endl;
 			if (pt.x >= 0 && pt.x < W && pt.y >= 0 && pt.y < H && raw_pcl_ptr->points[i].x > 0) //&& raw_pcl_ptr->points[i].x>0去掉图像后方的点云
 			{
-// #if MAX_MIN_RESOLUTION
-// 				if (pt.x < pt_min.x) {
-// 					pt_min.x = pt.x; 
-// 					}
-// 				if (pt.y < pt_min.y) {
-// 					pt_min.y = pt.y; 
-// 					}
-// 				if (pt.x > pt_max.x) {
-// 					pt_max.x = pt.x; 
-// 					}
-// 				if (pt.y > pt_max.y) {
-// 					pt_max.y = pt.y; 
-// 					}
-// #endif
+#if MAX_MIN_RESOLUTION
+				if (pt.x < pt_min.x) {
+					pt_min.x = pt.x; 
+					}
+				if (pt.y < pt_min.y) {
+					pt_min.y = pt.y; 
+					}
+				if (pt.x > pt_max.x) {
+					pt_max.x = pt.x; 
+					}
+				if (pt.y > pt_max.y) {
+					pt_max.y = pt.y; 
+					}
+#endif
 				PointType p;
 				p.x = raw_pcl_ptr->points[i].x;
 				p.y = raw_pcl_ptr->points[i].y;
@@ -163,9 +165,9 @@ private:
 				fusion_pcl_ptr->points.push_back(p);
 			}
 		}
-// #if MAX_MIN_RESOLUTION
-// 		std::cout<< "pt_min.x ="<<pt_min.x<<"  "<< "pt_min.y ="<<pt_min.y<<"  "<< "pt_max.y ="<<pt_max.y<<"  "<< "pt_max.x ="<<pt_max.x<<std::endl;
-// #endif
+#if MAX_MIN_RESOLUTION
+		std::cout<< "pt_min.x ="<<pt_min.x<<"  "<< "pt_min.y ="<<pt_min.y<<"  "<< "pt_max.y ="<<pt_max.y<<"  "<< "pt_max.x ="<<pt_max.x<<std::endl;
+#endif
 		fusion_pcl_ptr->width = fusion_pcl_ptr->points.size();
 		fusion_pcl_ptr->height = 1;
 		// std::cout<<  fusion_pcl_ptr->points.size() << std::endl;
@@ -174,8 +176,8 @@ private:
 		fusion_msg.header.stamp = laserCloudMsg->header.stamp; // 时间戳和/livox/lidar 一致
 		// std::cout<<fusion_msg;
 		pubCloud.publish(fusion_msg);						   //发布调整之后的点云数据
-	// ends=clock();
-	// std::cout<<"fusion call:"<<(double (ends-start)/CLOCKS_PER_SEC)<<std::endl;
+ends=clock();
+std::cout<<"fusion call:"<<(double (ends-start)/CLOCKS_PER_SEC)<<std::endl;
 	}
 };
 
@@ -183,12 +185,15 @@ void imageCallback(const sensor_msgs::ImageConstPtr &msg)
 {
 	try
 	{
-// clock_t start,ends;
-// start=clock();
 		cv::Mat image = cv_bridge::toCvShare(msg, "bgr8")->image; //image_raw就是我们得到的图像了
-		cv::Mat map1, map2;
-		cv::Size imageSize = image.size();
- 
+clock_t start,ends;
+start=clock();
+		// 去畸变，可选		
+		// cv::Mat map1, map2;
+		// cv::Size imageSize = image.size();
+		// cv::initUndistortRectifyMap(intrisic, distCoeffs, cv::Mat(), cv::getOptimalNewCameraMatrix(intrisic, distCoeffs, imageSize, 1, imageSize, 0), imageSize, CV_16SC2, map1, map2);
+		// cv::remap(image, image, map1, map2, cv::INTER_LINEAR); // correct the distortion
+		// cv::imwrite("1.bmp",image);
 // ends=clock();
 // std::cout<<"img call1:"<<(double (ends-start)/CLOCKS_PER_SEC)<<std::endl;
 		for (int row = 0; row < H; row++)
@@ -198,8 +203,8 @@ void imageCallback(const sensor_msgs::ImageConstPtr &msg)
 				image_color[row][col] = (cv::Vec3b)image.at<cv::Vec3b>(row, col);
 			}
 		}
-// ends=clock();
-// std::cout<<"img call2:"<<(double (ends-start)/CLOCKS_PER_SEC)<<std::endl;
+ends=clock();
+std::cout<<"img call2:"<<(double (ends-start)/CLOCKS_PER_SEC)<<std::endl;
 
 	}
 	catch (cv_bridge::Exception &e)

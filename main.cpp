@@ -38,7 +38,7 @@ POINT_CLOUD_REGISTER_POINT_STRUCT(
 
 typedef PointXYZRGBIL PointType;
 // 使用pcl::PointXYZRGBNormal结构体代替自定义的PointXYZRGBI，为了livox_color_mapping建图，自定义结构体不支持很多内置函数
-// typedef pcl::PointXYZRGBNormal PointType
+// typedef pcl::PointXYZRGBNormal PointType;
 
 //全局变量都能访问，图像回调中写，点云回调中读
 cv::Vec3b image_color[H][W];
@@ -160,11 +160,11 @@ void imageCallback(const sensor_msgs::ImageConstPtr &msg)
 	try
 	{
 		cv::Mat image = cv_bridge::toCvShare(msg, "bgr8")->image; //image_raw就是我们得到的图像了
-		cv::Mat map1, map2;
-		cv::Size imageSize = image.size();
 		// 去畸变，可选
-		cv::initUndistortRectifyMap(intrisic, distCoeffs, cv::Mat(), cv::getOptimalNewCameraMatrix(intrisic, distCoeffs, imageSize, 1, imageSize, 0), imageSize, CV_16SC2, map1, map2);
-		cv::remap(image, image, map1, map2, cv::INTER_LINEAR); // correct the distortion
+		// cv::Mat map1, map2;
+		// cv::Size imageSize = image.size();		
+		// cv::initUndistortRectifyMap(intrisic, distCoeffs, cv::Mat(), cv::getOptimalNewCameraMatrix(intrisic, distCoeffs, imageSize, 1, imageSize, 0), imageSize, CV_16SC2, map1, map2);
+		// cv::remap(image, image, map1, map2, cv::INTER_LINEAR); // correct the distortion
 		// cv::imwrite("1.bmp",image);
 		for (int row = 0; row < H; row++)
 		{
