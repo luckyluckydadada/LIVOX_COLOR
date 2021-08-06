@@ -119,6 +119,11 @@ private:
 		cv::Mat Y(3, 1, cv::DataType<double>::type);
 
 		pcl::PointCloud<PointType>::Ptr fusion_pcl_ptr(new pcl::PointCloud<PointType>); //放在这里是因为，每次都需要重新初始化
+		
+		cv::Point pt_min,pt_max; // 统计点云在画面中的最大像素和最小像素
+		pt_min.x=W;pt_max.x=0; // 赋初值
+		pt_min.y=H;pt_max.x=0; // 赋初值
+
 		for (int i = 0; i < raw_pcl_ptr->points.size(); i++)
 		{
 			X.at<double>(0, 0) = raw_pcl_ptr->points[i].x;
@@ -133,6 +138,19 @@ private:
 			// std::cout<<Y<<pt<<std::endl;
 			if (pt.x >= 0 && pt.x < W && pt.y >= 0 && pt.y < H && raw_pcl_ptr->points[i].x > 0) //&& raw_pcl_ptr->points[i].x>0去掉图像后方的点云
 			{
+				if (pt.x < pt_min.x) {
+					pt_min.x = pt.x; 
+					}
+				if (pt.y < pt_min.y) {
+					pt_min.y = pt.y; 
+					}
+				if (pt.x > pt_max.x) {
+					pt_max.x = pt.x; 
+					}
+				if (pt.y > pt_max.y) {
+					pt_max.y = pt.y; 
+					}
+
 				PointType p;
 				p.x = raw_pcl_ptr->points[i].x;
 				p.y = raw_pcl_ptr->points[i].y;
@@ -144,6 +162,8 @@ private:
 				fusion_pcl_ptr->points.push_back(p);
 			}
 		}
+
+		std::cout<< "pt_min.x ="<<pt_min.x<<"  "<< "pt_min.y ="<<pt_min.y<<"  "<< "pt_max.y ="<<pt_max.y<<"  "<< "pt_max.x ="<<pt_max.x<<std::endl;
 
 		fusion_pcl_ptr->width = fusion_pcl_ptr->points.size();
 		fusion_pcl_ptr->height = 1;
