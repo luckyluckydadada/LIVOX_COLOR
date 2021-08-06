@@ -3,7 +3,9 @@ Panels:
     Help Height: 78
     Name: Displays
     Property Tree Widget:
-      Expanded: ~
+      Expanded:
+        - /PointCloud21
+        - /PointCloud22
       Splitter Ratio: 0.5
     Tree Height: 373
   - Class: rviz/Selection
@@ -43,7 +45,7 @@ Visualization Manager:
       Class: rviz/PointCloud2
       Color: 255; 255; 255
       Color Transformer: RGB8
-      Decay Time: 3
+      Decay Time: 1
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
@@ -65,8 +67,8 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 1.4910000562667847
-        Min Value: -1.25600004196167
+        Max Value: 2.875
+        Min Value: -1.312999963760376
         Value: true
       Axis: Z
       Channel Name: intensity
@@ -132,7 +134,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 1.6559110879898071
+      Distance: 2.0771749019622803
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -147,10 +149,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.070935919880867
+      Pitch: 0.01093594916164875
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 3.541593551635742
+      Yaw: 2.8065898418426514
     Saved: ~
 Window Geometry:
   Displays:
