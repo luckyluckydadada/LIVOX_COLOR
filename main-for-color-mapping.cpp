@@ -21,9 +21,23 @@
 
 #define Hmax 2048
 #define Wmax 3072
-#define H Hmax
-#define W Wmax
-#define MAX_MIN_RESOLUTION true
+
+#define FIT_LIDAR_CUT_IMAGE true
+
+// 变更相机和雷达的位置关系后要从新修改下面的值
+#if FIT_LIDAR_CUT_IMAGE
+	#define FIT_min_x 420
+	#define FIT_min_y 70
+	#define FIT_max_x 2450
+	#define FIT_max_y 2000
+	#define H  (FIT_max_y - FIT_min_y)
+	#define W  (FIT_max_x - FIT_min_x)
+#else
+	#define H Hmax
+	#define W Wmax
+#endif 
+
+#define MAX_MIN_RESOLUTION false
 
 /* 自定义的PointXYZRGBIL（pcl没有PointXYZRGBIL、PointXYZRGBI结构体）*/
 // struct PointXYZRGBIL
@@ -122,8 +136,8 @@ private:
 		pcl::PointCloud<PointType>::Ptr fusion_pcl_ptr(new pcl::PointCloud<PointType>); //放在这里是因为，每次都需要重新初始化
 #if MAX_MIN_RESOLUTION		
 		cv::Point pt_min,pt_max; // 统计点云在画面中的最大像素和最小像素
-		pt_min.x=W;pt_max.x=0; // 赋初值
-		pt_min.y=H;pt_max.x=0; // 赋初值
+		pt_min.x=Wmax;pt_max.x=0; // 赋初值
+		pt_min.y=Hmax;pt_max.x=0; // 赋初值
 #endif
 
 		for (int i = 0; i < raw_pcl_ptr->points.size(); i++)
@@ -138,7 +152,12 @@ private:
 			pt.x = Y.at<double>(0, 0) / Y.at<double>(2, 0);
 			pt.y = Y.at<double>(1, 0) / Y.at<double>(2, 0);
 			// std::cout<<Y<<pt<<std::endl;
-			if (pt.x >= 0 && pt.x < W && pt.y >= 0 && pt.y < H && raw_pcl_ptr->points[i].x > 0) //&& raw_pcl_ptr->points[i].x>0去掉图像后方的点云
+#if FIT_LIDAR_CUT_IMAGE
+// 经过外参计算的点云投影到相机上的像素位置是2078x3072为标准，相机topic照片我们剪裁了，所以要加上偏移
+		if (pt.x >= FIT_min_x && pt.x < FIT_max_x && pt.y >= FIT_min_y && pt.y < FIT_max_y && raw_pcl_ptr->points[i].x > 0)
+#else
+		if (pt.x >= 0 && pt.x < W && pt.y >= 0 && pt.y < H && raw_pcl_ptr->points[i].x > 0) //&& raw_pcl_ptr->points[i].x>0去掉图像后方的点云
+#endif 
 			{
 #if MAX_MIN_RESOLUTION
 				if (pt.x < pt_min.x) {
@@ -159,9 +178,16 @@ private:
 				p.y = raw_pcl_ptr->points[i].y;
 				p.z = raw_pcl_ptr->points[i].z;
 				//点云颜色由图像上对应点确定
+#if FIT_LIDAR_CUT_IMAGE
+				p.b = image_color[pt.y-FIT_min_y][pt.x-FIT_min_x][0];
+				p.g = image_color[pt.y-FIT_min_y][pt.x-FIT_min_x][1];
+				p.r = image_color[pt.y-FIT_min_y][pt.x-FIT_min_x][2];
+#else
 				p.b = image_color[pt.y][pt.x][0];
 				p.g = image_color[pt.y][pt.x][1];
 				p.r = image_color[pt.y][pt.x][2];
+#endif 
+
 				fusion_pcl_ptr->points.push_back(p);
 			}
 		}
@@ -183,12 +209,13 @@ private:
 
 void imageCallback(const sensor_msgs::ImageConstPtr &msg)
 {
-clock_t start,ends;
-start=clock();	
+// clock_t start,ends;
+// start=clock();	
 	try
 	{
 		cv::Mat image = cv_bridge::toCvShare(msg, "bgr8")->image; //image_raw就是我们得到的图像了
-
+		int rows = image.rows;//std::cout<<"rows="<<rows<<std::endl; 
+		int cols = image.cols;//std::cout<<"cols="<<cols<<std::endl; 
 		// 去畸变，可选		
 		// cv::Mat map1, map2;
 		// cv::Size imageSize = image.size();
@@ -197,9 +224,9 @@ start=clock();
 		// cv::imwrite("1.bmp",image);
 // ends=clock();
 // std::cout<<"img call1:"<<(double (ends-start)/CLOCKS_PER_SEC)<<std::endl;
-		for (int row = 0; row < H; row++)
+		for (int row = 0; row < rows; row++)
 		{
-			for (int col = 0; col < W; col++)
+			for (int col = 0; col < cols; col++)
 			{
 				image_color[row][col] = (cv::Vec3b)image.at<cv::Vec3b>(row, col);
 			}
