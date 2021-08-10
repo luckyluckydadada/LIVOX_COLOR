@@ -23,7 +23,7 @@
 #define Wmax 3072
 #define H Hmax
 #define W Wmax
-#define MAX_MIN_RESOLUTION false
+#define MAX_MIN_RESOLUTION true
 
 /* 自定义的PointXYZRGBIL（pcl没有PointXYZRGBIL、PointXYZRGBI结构体）*/
 // struct PointXYZRGBIL
@@ -112,8 +112,8 @@ private:
 	//点云回调函数
 	void pointCloudCallback(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg)
 	{
-clock_t start,ends;
-start=clock();
+// clock_t start,ends;
+// start=clock();
 		pcl::PointCloud<pcl::PointXYZI>::Ptr raw_pcl_ptr(new pcl::PointCloud<pcl::PointXYZI>); //livox点云消息包含xyz和intensity
 		pcl::fromROSMsg(*laserCloudMsg, *raw_pcl_ptr);										   //把msg消息指针转化为PCL点云
 		cv::Mat X(4, 1, cv::DataType<double>::type);
@@ -166,7 +166,7 @@ start=clock();
 			}
 		}
 #if MAX_MIN_RESOLUTION
-		std::cout<< "pt_min.x ="<<pt_min.x<<"  "<< "pt_min.y ="<<pt_min.y<<"  "<< "pt_max.y ="<<pt_max.y<<"  "<< "pt_max.x ="<<pt_max.x<<std::endl;
+		std::cout<< "pt_min.x ="<<pt_min.x<<"  "<< "pt_min.y ="<<pt_min.y<<"  "<< "pt_max.x ="<<pt_max.x<<"  "<< "pt_max.y ="<<pt_max.y<<std::endl;
 #endif
 		fusion_pcl_ptr->width = fusion_pcl_ptr->points.size();
 		fusion_pcl_ptr->height = 1;
@@ -176,18 +176,19 @@ start=clock();
 		fusion_msg.header.stamp = laserCloudMsg->header.stamp; // 时间戳和/livox/lidar 一致
 		// std::cout<<fusion_msg;
 		pubCloud.publish(fusion_msg);						   //发布调整之后的点云数据
-ends=clock();
-std::cout<<"fusion call:"<<(double (ends-start)/CLOCKS_PER_SEC)<<std::endl;
+// ends=clock();
+// std::cout<<"fusion call:"<<(double (ends-start)/CLOCKS_PER_SEC)<<std::endl;
 	}
 };
 
 void imageCallback(const sensor_msgs::ImageConstPtr &msg)
 {
+clock_t start,ends;
+start=clock();	
 	try
 	{
 		cv::Mat image = cv_bridge::toCvShare(msg, "bgr8")->image; //image_raw就是我们得到的图像了
-clock_t start,ends;
-start=clock();
+
 		// 去畸变，可选		
 		// cv::Mat map1, map2;
 		// cv::Size imageSize = image.size();
@@ -203,14 +204,15 @@ start=clock();
 				image_color[row][col] = (cv::Vec3b)image.at<cv::Vec3b>(row, col);
 			}
 		}
-ends=clock();
-std::cout<<"img call2:"<<(double (ends-start)/CLOCKS_PER_SEC)<<std::endl;
+
 
 	}
 	catch (cv_bridge::Exception &e)
 	{
 		ROS_ERROR("Could not conveextrinsicMat_RT from '%s' to 'bgr8'.", msg->encoding.c_str());
 	}
+// ends=clock();
+// std::cout<<"img call:"<<(double (ends-start)/CLOCKS_PER_SEC)<<std::endl;
 }
 
 int main(int argc, char **argv)
