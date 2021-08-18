@@ -22,7 +22,7 @@
 #define Hmax 2048
 #define Wmax 3072
 
-#define FIT_LIDAR_CUT_IMAGE true
+#define FIT_LIDAR_CUT_IMAGE False
 
 // 变更相机和雷达的位置关系后要从新修改下面的值
 #if FIT_LIDAR_CUT_IMAGE
