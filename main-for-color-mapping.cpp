@@ -71,18 +71,18 @@ void CalibrationData(void)
 	// 0.0558064  -0.0205011  -0.998231  0.0499455
 	// 0.997421  0.046348  0.0548092  0.42788
 	// 0  0  0  1
-	extrinsicMat_RT.at<double>(0, 0) = 0.00856673;
-	extrinsicMat_RT.at<double>(0, 1) = -0.999796;
-	extrinsicMat_RT.at<double>(0, 2) =0.0183121;
-	extrinsicMat_RT.at<double>(0, 3) =  -0.00809198;
-	extrinsicMat_RT.at<double>(1, 0) = -0.0149158;
-	extrinsicMat_RT.at<double>(1, 1) = -0.0184385;
-	extrinsicMat_RT.at<double>(1, 2) = -0.999719;
-	extrinsicMat_RT.at<double>(1, 3) = -0.064628;
-	extrinsicMat_RT.at<double>(2, 0) = 0.999852;
-	extrinsicMat_RT.at<double>(2, 1) = 0.00829119;
-	extrinsicMat_RT.at<double>(2, 2) = -0.0150707;
-	extrinsicMat_RT.at<double>(2, 3) = 0.392974;
+	extrinsicMat_RT.at<double>(0, 0) = 0.0715019;
+	extrinsicMat_RT.at<double>(0, 1) = -0.997146;
+	extrinsicMat_RT.at<double>(0, 2) =0.024241;
+	extrinsicMat_RT.at<double>(0, 3) =  0.168924;
+	extrinsicMat_RT.at<double>(1, 0) = 0.0598713;
+	extrinsicMat_RT.at<double>(1, 1) = -0.0199688;
+	extrinsicMat_RT.at<double>(1, 2) = -0.998006;
+	extrinsicMat_RT.at<double>(1, 3) = -0.119454;
+	extrinsicMat_RT.at<double>(2, 0) = 0.995642;
+	extrinsicMat_RT.at<double>(2, 1) = 0.0728107;
+	extrinsicMat_RT.at<double>(2, 2) = 0.0582726;
+	extrinsicMat_RT.at<double>(2, 3) = 0.400851;
 	extrinsicMat_RT.at<double>(3, 0) = 0.0;
 	extrinsicMat_RT.at<double>(3, 1) = 0.0;
 	extrinsicMat_RT.at<double>(3, 2) = 0.0;
